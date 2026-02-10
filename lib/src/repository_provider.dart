@@ -58,6 +58,7 @@ class RepositoryProvider<T> extends Provider<T> {
   /// within the [Create] function.
   RepositoryProvider.value({required T value, Key? key, Component? child})
     : super.value(key: key, value: value, child: child);
+  
 
   /// Method that allows widgets to access a repository instance as long as
   /// their `BuildContext` contains a [RepositoryProvider] instance.

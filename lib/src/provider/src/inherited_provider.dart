@@ -166,7 +166,7 @@ class InheritedProvider<T> extends SingleChildStatelessComponent {
 }
 
 class _InheritedProviderElement<T> extends SingleChildStatelessElement {
-  _InheritedProviderElement(InheritedProvider<T> Component) : super(Component);
+  _InheritedProviderElement(InheritedProvider<T> component) : super(component);
 }
 
 bool _debugIsSelecting = false;
@@ -329,8 +329,8 @@ class _Dependency<T> {
 
 class _InheritedProviderScopeElement<T> extends InheritedElement
     implements InheritedContext<T> {
-  _InheritedProviderScopeElement(_InheritedProviderScope<T> Component)
-    : super(Component);
+  _InheritedProviderScopeElement(_InheritedProviderScope<T> component)
+    : super(component);
 
   bool _shouldNotifyDependents = false;
   bool _debugInheritLocked = false;
