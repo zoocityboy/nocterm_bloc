@@ -1,3 +1,8 @@
+# 1.0.3
+
+- chore: unit tests
+- refactor: example
+
 # 1.0.2
 
 - chore: updated readme.md with new screenshots and minor formatting improvements

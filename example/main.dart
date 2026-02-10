@@ -1,23 +1,21 @@
 import 'package:nocterm/nocterm.dart';
 import 'package:nocterm_bloc/nocterm_bloc.dart';
 
-Future<void> main() async {
-  runApp(
-    NoctermApp(
-      home: BlocProvider(
-        create: (context) => _CounterCubit(),
-        child: CounterDemo(),
-      ),
+Future<void> main() => runApp(
+  NoctermApp(
+    home: BlocProvider(
+      create: (context) => CounterCubit(),
+      child: CounterDemo(),
     ),
-  );
-}
+  ),
+);
 
 class CounterDemo extends StatelessComponent {
   static const maxCount = 20;
   Component build(BuildContext context) {
     return Focusable(
       onKeyEvent: (event) {
-        final cubit = context.read<_CounterCubit>();
+        final cubit = context.read<CounterCubit>();
         if (event.logicalKey == LogicalKey.arrowRight) {
           cubit.increment();
           return true;
@@ -32,47 +30,13 @@ class CounterDemo extends StatelessComponent {
         }
         return false;
       },
-      child: BlocListener<_CounterCubit, int>(
+      child: BlocListener<CounterCubit, int>(
         listenWhen: (previous, current) => current != previous,
         listener: (context, count) {
           if (count == maxCount) {
             Navigator.of(context)
-                .showDialog(
-                  builder: (context) {
-                    final theme = TuiTheme.of(context);
-                    return Container(
-                      width: 40,
-                      height: 7,
-                      padding: EdgeInsets.all(1),
-                      decoration: BoxDecoration(
-                        color: theme.success,
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Max count reached!',
-                            style: TextStyle(
-                              color: theme.onSuccess,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 1),
-                          Text(
-                            'Press ESC to close.',
-                            style: TextStyle(
-                              color: theme.onSuccess,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                )
-                .then((value) {});
+                .showDialog<bool>(builder: (context) => ConfirmDialogContent())
+                .then((value) => context.read<CounterCubit>().reset());
           }
         },
         child: Column(
@@ -80,13 +44,13 @@ class CounterDemo extends StatelessComponent {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const _TitleLabel(),
+            const TitleLabel(),
             const SizedBox(height: 1),
-            const _CounterComponent(),
+            const CounterComponent(),
             const SizedBox(height: 1),
-            const _ProgressRow(),
+            const ProgressRow(),
             const SizedBox(height: 1),
-            const _HintsComponent(),
+            const HintsComponent(),
           ],
         ),
       ),
@@ -96,8 +60,8 @@ class CounterDemo extends StatelessComponent {
 }
 
 /// A simple component that displays the title of the app.
-class _TitleLabel extends StatelessComponent {
-  const _TitleLabel();
+class TitleLabel extends StatelessComponent {
+  const TitleLabel();
   Component build(BuildContext context) {
     return Text(
       '⚡ Counter',
@@ -109,11 +73,11 @@ class _TitleLabel extends StatelessComponent {
   }
 }
 
-/// A component that listens to the `_CounterCubit` and displays the current count.
-class _CounterComponent extends StatelessComponent {
-  const _CounterComponent();
+/// A component that listens to the `CounterCubit` and displays the current count.
+class CounterComponent extends StatelessComponent {
+  const CounterComponent();
   Component build(BuildContext context) {
-    return BlocBuilder<_CounterCubit, int>(
+    return BlocBuilder<CounterCubit, int>(
       builder: (context, count) {
         return Text(
           '$count',
@@ -127,11 +91,11 @@ class _CounterComponent extends StatelessComponent {
   }
 }
 
-/// A component that listens to the `_CounterCubit` and displays a progress bar based on the current count.
-class _ProgressRow extends StatelessComponent {
-  const _ProgressRow();
+/// A component that listens to the `CounterCubit` and displays a progress bar based on the current count.
+class ProgressRow extends StatelessComponent {
+  const ProgressRow();
   Component build(BuildContext context) {
-    return BlocBuilder<_CounterCubit, int>(
+    return BlocBuilder<CounterCubit, int>(
       builder: (context, count) {
         final progress = (count % 20) / 20;
         final barWidth = 30;
@@ -161,8 +125,8 @@ class _ProgressRow extends StatelessComponent {
 }
 
 /// A component that displays hints for the user on how to interact with the app.
-class _HintsComponent extends StatelessComponent {
-  const _HintsComponent();
+class HintsComponent extends StatelessComponent {
+  const HintsComponent();
   Component build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -179,10 +143,46 @@ class _HintsComponent extends StatelessComponent {
   }
 }
 
+class ConfirmDialogContent extends StatelessComponent {
+  Component build(BuildContext context) {
+    final theme = TuiTheme.of(context);
+    return Container(
+      width: 40,
+      height: 7,
+      padding: EdgeInsets.all(1),
+      decoration: BoxDecoration(
+        color: theme.success,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            'Max count reached!',
+            style: TextStyle(
+              color: theme.onSuccess,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 1),
+          Text(
+            'Press ESC to close.',
+            style: TextStyle(
+              color: theme.onSuccess,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 /// A simple Cubit that manages an integer state representing a counter.
 // ignore: prefer_file_naming_conventions
-class _CounterCubit extends Cubit<int> {
-  _CounterCubit() : super(0);
+class CounterCubit extends Cubit<int> {
+  CounterCubit() : super(0);
 
   void increment() => emit(state + 1);
   void decrement() => emit(state - 1);
