@@ -12,6 +12,8 @@ environment:
 
 dependencies:
   bloc: ^9.0.0
+  collection: ^1.19.1
+  meta: ^1.18.1
   nocterm: ^0.4.0
 
 dev_dependencies:
