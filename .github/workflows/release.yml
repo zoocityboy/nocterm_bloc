@@ -4,35 +4,34 @@ on:
   push:
     branches: [ main ]
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      id-token: write
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-        token: ${{ secrets.GITHUB_TOKEN }}
-    - uses: dart-lang/setup-dart@v1
-    - name: Install dependencies
-      run: dart pub get
-    - name: Install semantic-release
-      run: npm install -g semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/exec
-    - name: Run semantic-release
-      run: |
-        semantic-release \
-          --branches main \
-          --plugins \
-            @semantic-release/commit-analyzer,\
-            @semantic-release/release-notes-generator,\
-            @semantic-release/changelog,\
-            @semantic-release/exec:\
-              prepareCmd: 'dart run pubspec_version:increment --build --pubspec pubspec.yaml',\
-            @semantic-release/git:\
-              assets: [CHANGELOG.md, pubspec.yaml],\
-              message: 'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}',\
-            @semantic-release/github
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+
+      - name: Install semantic-release
+        run: npm install -g semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/exec
+
+      - name: Run semantic-release
+        run: npx semantic-release --debug
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
