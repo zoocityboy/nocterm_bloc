@@ -1,5 +1,5 @@
 <p align="center">
-<img src="./assets/nocterm_bloc.png">
+<img src="https://raw.githubusercontent.com/zoocityboy/nocterm_bloc/refs/heads/main/assets/nocterm_bloc.png" height="100" alt="Bloc">
 </p>
 
 
