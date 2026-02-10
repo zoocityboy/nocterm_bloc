@@ -7,6 +7,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-purple.svg)](LICENSE)
 [![Dart](https://img.shields.io/badge/Dart-0175C2?logo=dart)](https://dart.dev)
 [![Nocterm](https://img.shields.io/badge/NOCTERM-f2f2f2?logo=nocterm&logoColor=000000)](https://nocterm.dev)
+[![Coverage](https://img.shields.io/badge/coverage-78.5%25-brightgreen)](https://github.com/zoocityboy/nocterm_bloc/actions)
 
 
 <h3 align="center">Terminal-friendly Bloc & Cubit helpers</h3>
