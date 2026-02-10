@@ -80,9 +80,14 @@ class Nested extends StatelessComponent implements SingleChildComponent {
   }
 
   @override
+  /// Creates the element that accompanies this [Nested] component.
+  ///
+  /// The returned element type is internal and is responsible for
+  /// building the flattened tree of nested single-child components.
+  @override
   _NestedElement createElement() => _NestedElement(this);
 }
-
+/// An [Element] that uses a [Nested] as its configuration.
 class _NestedElement extends StatelessElement
     with SingleChildComponentElementMixin {
   _NestedElement(Nested component) : super(component);
@@ -126,7 +131,7 @@ class _NestedElement extends StatelessElement
     return nextNode!;
   }
 }
-
+/// A component used internally by [Nested] to wrap the children of [Nested] and inject the child of [Nested] at the right place in the tree.
 class _NestedHook extends StatelessComponent {
   _NestedHook({
     this.injectedChild,
@@ -146,6 +151,7 @@ class _NestedHook extends StatelessComponent {
       throw StateError('handled internally');
 }
 
+/// An [Element] that uses a [_NestedHook] as its configuration.
 class _NestedHookElement extends StatelessElement {
   _NestedHookElement(_NestedHook component) : super(component);
 
@@ -209,15 +215,37 @@ class _NestedHookElement extends StatelessElement {
 /// - [SingleChildStatelessComponent]
 /// - [SingleChildStatefulComponent]
 abstract class SingleChildComponent implements Component {
+  /// Creates an [Element] for this [SingleChildComponent].
+  ///
+  /// Implementations should return an element that mixes in
+  /// [SingleChildComponentElementMixin] so that they can participate in
+  /// [Nested] injection behaviour.
   @override
   SingleChildComponentElementMixin createElement();
-}
 
+  /// Creates a new instance of a [SingleChildComponent].
+  ///
+  /// This constructor is provided to document the implicit unnamed
+  /// constructor for subclasses. The class is abstract and cannot be
+  /// instantiated directly.
+  const SingleChildComponent();
+}
+/// A mixin for [Element]s of [SingleChildComponent]s that allows them to be used
+/// as children of [Nested].
+/// A mixin for [Element] implementations of [SingleChildComponent].
+///
+/// This mixin tracks the optional enclosing [_NestedHookElement] so the
+/// element can receive an `injectedChild` when used inside a [Nested]
+/// component. It also provides lifecycle hooks that ensure the mixin
+/// initializes `_parent` when mounted or activated.
 mixin SingleChildComponentElementMixin on Element {
+  /// The nearest ancestor [_NestedHookElement], if any.
   _NestedHookElement? _parent;
 
   @override
   void mount(Element? parent, dynamic newSlot) {
+    // If mounted under a [_NestedHookElement], keep a reference so that
+    // this element can receive an injected child during builds.
     if (parent is _NestedHookElement?) {
       _parent = parent;
     }
@@ -227,6 +255,8 @@ mixin SingleChildComponentElementMixin on Element {
   @override
   void activate() {
     super.activate();
+    // Ensure we pick up the ancestor hook element if we were relocated or
+    // reparented after activation.
     visitAncestorElements((parent) {
       if (parent is _NestedHookElement) {
         _parent = parent;
@@ -366,6 +396,7 @@ class SingleChildBuilder extends SingleChildStatelessComponent {
   }
 }
 
+/// A [StatefulComponent] that is compatible with [Nested].
 mixin SingleChildStatelessComponentMixin
     implements StatelessComponent, SingleChildStatelessComponent {
   Component? get child;
@@ -384,6 +415,7 @@ mixin SingleChildStatelessComponentMixin
   }
 }
 
+/// A [StatefulComponent] that is compatible with [Nested].
 mixin SingleChildStatefulComponentMixin on StatefulComponent
     implements SingleChildComponent {
   Component? get child;
@@ -393,6 +425,7 @@ mixin SingleChildStatefulComponentMixin on StatefulComponent
       _SingleChildStatefulMixinElement(this);
 }
 
+/// A [State] for [SingleChildStatefulComponentMixin].
 mixin SingleChildStateMixin<T extends StatefulComponent> on State<T> {
   Component buildWithChild(BuildContext context, Component child);
 
@@ -427,6 +460,7 @@ class _SingleChildStatefulMixinElement extends StatefulElement
   }
 }
 
+/// A [Component] that takes a single descendant.
 mixin SingleChildInheritedElementMixin
     on InheritedElement, SingleChildComponentElementMixin {
   @override

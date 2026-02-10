@@ -7,8 +7,11 @@ homepage: https://github.com/zoocityboy/nocterm_bloc
 documentation: https://github.com/zoocityboy/nocterm_bloc#readme
 topics: [bloc, nocterm, state-management]
 screenshots:
+  - description: "Example of a terminal UI built with nocterm_bloc."
+    path: assets/nocterm_bloc_example.png
   - description: "Icon representing the nocterm_bloc package."
     path: assets/nocterm_bloc_icon.png
+  
 
 environment:
   sdk: ">=3.10.0 <4.0.0"

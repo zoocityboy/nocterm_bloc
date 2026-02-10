@@ -1,3 +1,11 @@
+# 1.0.2
+
+- chore: updated readme.md with new screenshots and minor formatting improvements
+- feat: added screenshots to pubspec.yaml for better package listing on pub.dev
+- chore: minor formatting fixes in example/main.dart and lib/src/provider/src/inherited_provider.dart
+- chore: removed unused import in lib/src/bloc_listener.dart
+- chore: updated changelog with version 1.0.2 entry and fixed formatting in 1.0.1 entry
+
 # 1.0.1
 
 - chore: fixes on readme.md
