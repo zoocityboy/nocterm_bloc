@@ -76,10 +76,10 @@ class CounterDemo extends StatelessComponent {
           }
         },
         child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
             const _TitleLabel(),
             const SizedBox(height: 1),
             const _CounterComponent(),
