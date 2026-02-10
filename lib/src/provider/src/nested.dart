@@ -87,6 +87,7 @@ class Nested extends StatelessComponent implements SingleChildComponent {
   @override
   _NestedElement createElement() => _NestedElement(this);
 }
+
 /// An [Element] that uses a [Nested] as its configuration.
 class _NestedElement extends StatelessElement
     with SingleChildComponentElementMixin {
@@ -131,6 +132,7 @@ class _NestedElement extends StatelessElement
     return nextNode!;
   }
 }
+
 /// A component used internally by [Nested] to wrap the children of [Nested] and inject the child of [Nested] at the right place in the tree.
 class _NestedHook extends StatelessComponent {
   _NestedHook({
@@ -230,6 +232,7 @@ abstract class SingleChildComponent implements Component {
   /// instantiated directly.
   const SingleChildComponent();
 }
+
 /// A mixin for [Element]s of [SingleChildComponent]s that allows them to be used
 /// as children of [Nested].
 /// A mixin for [Element] implementations of [SingleChildComponent].

@@ -1,2 +1,5 @@
-include:
-  - package:bloc_lint/recommended.yaml
+include: package:bloc_lint/recommended.yaml
+
+formatter:
+  page_width: 80
+  trailing_commas: preserve
