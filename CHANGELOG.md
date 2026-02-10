@@ -1,3 +1,7 @@
+# 1.0.1
+
+- chore: fixes on readme.md
+
 # 1.0.0
 
 - feat: initial version of `nocterm_bloc` 
