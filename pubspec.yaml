@@ -14,7 +14,7 @@ dependencies:
   bloc: ^9.0.0
   collection: ^1.19.1
   meta: ^1.18.1
-  nocterm: ^0.4.0
+  nocterm: ^0.5.0
 
 dev_dependencies:
   bloc_lint: ^0.3.2
