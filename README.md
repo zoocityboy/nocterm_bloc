@@ -12,9 +12,6 @@
 <h3 align="center">Terminal-friendly Bloc & Cubit helpers</h3>
 
 
-<p align="center">
-<img src="https://raw.githubusercontent.com/zoocityboy/nocterm_bloc/refs/heads/main/assets/nocterm_bloc_example.png" height="100" alt="Nocterm Bloc Example">
-</p>
 
 This package adapts the ideas and APIs popularized by Felix Angelov's `bloc` project for terminal (TUI) environments used by <a href="https://nocterm.dev">nocterm.dev</a> and related CLI apps.
 
@@ -24,6 +21,11 @@ Key points:
 - Focused on terminal UIs: no Flutter widgets, minimal runtime overhead, and helpers that integrate cleanly with terminal render loops.
 - Preserves familiar `Bloc`/`Cubit` semantics so Flutter developers can carry patterns to CLI/TUI projects.
 
+---
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/zoocityboy/nocterm_bloc/refs/heads/main/assets/nocterm_bloc_example.png" height="300" alt="Nocterm Bloc Example">
+</p>
 
 ## Overview
 
