@@ -1,0 +1,19 @@
+name: nocterm_bloc
+description: Terminal-friendly Bloc & Cubit helpers for nocterm.dev and related CLI apps.
+version: 1.0.0
+repository: https://github.com/zoocityboy/nocterm_bloc
+issue_tracker: https://github.com/zoocityboy/nocterm_bloc/issues
+homepage: https://github.com/zoocityboy/nocterm_bloc
+documentation: https://github.com/zoocityboy/nocterm_bloc#readme
+topics: [bloc, nocterm, state-management]
+
+environment:
+  sdk: ">=3.10.0 <4.0.0"
+
+dependencies:
+  bloc: ^9.0.0
+  nocterm: ^0.4.0
+
+dev_dependencies:
+  bloc_lint: ^0.3.2
+  test: ^1.24.0
