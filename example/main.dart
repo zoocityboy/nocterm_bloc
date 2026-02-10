@@ -82,7 +82,8 @@ class CounterDemo extends StatelessComponent {
           final filled = (progress * barWidth).round();
 
           return Column(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(

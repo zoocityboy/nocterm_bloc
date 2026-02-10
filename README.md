@@ -4,11 +4,17 @@
 
 
 [![Pub](https://img.shields.io/pub/v/nocterm_bloc.svg)](https://pub.dev/packages/nocterm_bloc)
-[![License: MIT](https://img.shields.io/badge/license-MIT-purple.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/license-MIT-purple.svg)](LICENSE)
+[![Dart](https://img.shields.io/badge/Dart-0175C2?logo=dart)](https://dart.dev)
+[![Nocterm](https://img.shields.io/badge/NOCTERM-f2f2f2?logo=nocterm&logoColor=000000)](https://nocterm.dev)
 
 
 <h3 align="center">Terminal-friendly Bloc & Cubit helpers</h3>
 
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/zoocityboy/nocterm_bloc/refs/heads/main/assets/nocterm_bloc_example.png" height="100" alt="Nocterm Bloc Example">
+</p>
 
 This package adapts the ideas and APIs popularized by Felix Angelov's `bloc` project for terminal (TUI) environments used by <a href="https://nocterm.dev">nocterm.dev</a> and related CLI apps.
 
