@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:nocterm/nocterm.dart';
 
 import 'bloc_listener.dart';
+import 'bloc_state_mixin.dart';
 import 'provider/src/provider.dart';
 
 /// Signature for the `builder` function which takes the `BuildContext` and
@@ -124,47 +125,40 @@ abstract class BlocBuilderBase<B extends StateStreamable<S>, S>
 }
 
 class _BlocBuilderBaseState<B extends StateStreamable<S>, S>
-    extends State<BlocBuilderBase<B, S>> {
-  late B _bloc;
+    extends State<BlocBuilderBase<B, S>>
+    with BlocStateMixin<B, S> {
   late S _state;
+
+  @override
+  B? get widgetBloc => component.bloc;
+
+  @override
+  void onBlocChanged(B newBloc) => _state = newBloc.state;
 
   @override
   void initState() {
     super.initState();
-    _bloc = component.bloc ?? context.read<B>();
-    _state = _bloc.state;
+    resolvedBloc = component.bloc ?? context.read<B>();
+    _state = resolvedBloc.state;
   }
 
   @override
   void didUpdateComponent(BlocBuilderBase<B, S> oldWidget) {
     super.didUpdateComponent(oldWidget);
-    final oldBloc = oldWidget.bloc ?? context.read<B>();
-    final currentBloc = component.bloc ?? oldBloc;
-    if (oldBloc != currentBloc) {
-      _bloc = currentBloc;
-      _state = _bloc.state;
-    }
+    resolveBlocOnUpdate(oldWidget.bloc);
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final bloc = component.bloc ?? context.read<B>();
-    if (_bloc != bloc) {
-      _bloc = bloc;
-      _state = _bloc.state;
-    }
+    resolveBlocOnDependencyChange();
   }
 
   @override
   Component build(BuildContext context) {
-    if (component.bloc == null) {
-      // Trigger a rebuild if the bloc reference has changed.
-      // See https://github.com/felangel/bloc/issues/2127.
-      context.select<B, bool>((bloc) => identical(_bloc, bloc));
-    }
+    applyBlocSelectGuard(context);
     return BlocListener<B, S>(
-      bloc: _bloc,
+      bloc: resolvedBloc,
       listenWhen: component.buildWhen,
       listener: (context, state) => setState(() => _state = state),
       child: component.build(context, _state),

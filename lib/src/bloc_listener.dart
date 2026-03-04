@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:nocterm/nocterm.dart';
 import 'package:nocterm_bloc/nocterm_bloc.dart';
 
+import 'bloc_state_mixin.dart';
+import 'provider/src/provider.dart';
+
 /// Signature for the `listener` function which takes the `BuildContext` along
 /// with the `state` and is responsible for executing in response to
 /// `state` changes.
@@ -131,55 +134,46 @@ abstract class BlocListenerBase<B extends StateStreamable<S>, S>
 }
 
 class _BlocListenerBaseState<B extends StateStreamable<S>, S>
-    extends SingleChildState<BlocListenerBase<B, S>> {
+    extends SingleChildState<BlocListenerBase<B, S>>
+    with BlocStateMixin<B, S> {
   StreamSubscription<S>? _subscription;
-  late B _bloc;
   late S _previousState;
+
+  @override
+  B? get widgetBloc => component.bloc;
+
+  @override
+  void onBlocChanged(B newBloc) {
+    if (_subscription != null) {
+      _unsubscribe();
+      _previousState = newBloc.state;
+    }
+    _subscribe();
+  }
 
   @override
   void initState() {
     super.initState();
-    _bloc = component.bloc ?? context.read<B>();
-    _previousState = _bloc.state;
+    resolvedBloc = component.bloc ?? context.read<B>();
+    _previousState = resolvedBloc.state;
     _subscribe();
   }
 
   @override
   void didUpdateComponent(BlocListenerBase<B, S> oldComponent) {
     super.didUpdateComponent(oldComponent);
-    final oldBloc = oldComponent.bloc ?? context.read<B>();
-    final currentBloc = component.bloc ?? oldBloc;
-    if (oldBloc != currentBloc) {
-      if (_subscription != null) {
-        _unsubscribe();
-        _bloc = currentBloc;
-        _previousState = _bloc.state;
-      }
-      _subscribe();
-    }
+    resolveBlocOnUpdate(oldComponent.bloc);
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final bloc = component.bloc ?? context.read<B>();
-    if (_bloc != bloc) {
-      if (_subscription != null) {
-        _unsubscribe();
-        _bloc = bloc;
-        _previousState = _bloc.state;
-      }
-      _subscribe();
-    }
+    resolveBlocOnDependencyChange();
   }
 
   @override
   Component buildWithChild(BuildContext context, Component? child) {
-    if (component.bloc == null) {
-      // Trigger a rebuild if the bloc reference has changed.
-      // See https://github.com/felangel/bloc/issues/2127.
-      context.select<B, bool>((bloc) => identical(_bloc, bloc));
-    }
+    applyBlocSelectGuard(context);
     return child ?? const SizedBox.shrink();
   }
 
@@ -190,7 +184,7 @@ class _BlocListenerBaseState<B extends StateStreamable<S>, S>
   }
 
   void _subscribe() {
-    _subscription = _bloc.stream.listen((state) {
+    _subscription = resolvedBloc.stream.listen((state) {
       if (!mounted) return;
       if (component.listenWhen?.call(_previousState, state) ?? true) {
         component.listener(context, state);
