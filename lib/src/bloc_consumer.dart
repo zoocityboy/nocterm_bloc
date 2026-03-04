@@ -1,6 +1,9 @@
 import 'package:nocterm/nocterm.dart';
 import 'package:nocterm_bloc/nocterm_bloc.dart';
 
+import 'bloc_state_mixin.dart';
+import 'provider/src/provider.dart';
+
 /// {@template bloc_consumer}
 /// [BlocConsumer] exposes a [builder] and [listener] in order react to new
 /// states.
@@ -99,39 +102,34 @@ class BlocConsumer<B extends StateStreamable<S>, S> extends StatefulComponent {
 }
 
 class _BlocConsumerState<B extends StateStreamable<S>, S>
-    extends State<BlocConsumer<B, S>> {
-  late B _bloc;
+    extends State<BlocConsumer<B, S>>
+    with BlocStateMixin<B, S> {
+  @override
+  B? get widgetBloc => component.bloc;
 
   @override
   void initState() {
     super.initState();
-    _bloc = component.bloc ?? context.read<B>();
+    resolvedBloc = component.bloc ?? context.read<B>();
   }
 
   @override
   void didUpdateComponent(BlocConsumer<B, S> oldComponent) {
     super.didUpdateComponent(oldComponent);
-    final oldBloc = oldComponent.bloc ?? context.read<B>();
-    final currentBloc = component.bloc ?? oldBloc;
-    if (oldBloc != currentBloc) _bloc = currentBloc;
+    resolveBlocOnUpdate(oldComponent.bloc);
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final bloc = component.bloc ?? context.read<B>();
-    if (_bloc != bloc) _bloc = bloc;
+    resolveBlocOnDependencyChange();
   }
 
   @override
   Component build(BuildContext context) {
-    if (component.bloc == null) {
-      // Trigger a rebuild if the bloc reference has changed.
-      // See https://github.com/felangel/bloc/issues/2127.
-      context.select<B, bool>((bloc) => identical(_bloc, bloc));
-    }
+    applyBlocSelectGuard(context);
     return BlocBuilder<B, S>(
-      bloc: _bloc,
+      bloc: resolvedBloc,
       builder: component.builder,
       buildWhen: (previous, current) {
         if (component.listenWhen?.call(previous, current) ?? true) {

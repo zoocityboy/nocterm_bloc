@@ -1,5 +1,6 @@
 import 'package:nocterm/nocterm.dart';
 import 'provider/provider.dart';
+import 'provider_lookup.dart';
 
 /// {@template repository_provider}
 /// Takes a `create` function that is responsible for creating the repository
@@ -61,19 +62,12 @@ class RepositoryProvider<T> extends Provider<T> {
 
   /// Method that allows widgets to access a repository instance as long as
   /// their `BuildContext` contains a [RepositoryProvider] instance.
-  static T of<T>(BuildContext context, {bool listen = false}) {
-    try {
-      return Provider.of<T>(context, listen: listen);
-    } on ProviderNotFoundException catch (e) {
-      if (e.valueType != T) rethrow;
-      throw FlutterError('''
-        RepositoryProvider.of() called with a context that does not contain a repository of type $T.
-        No ancestor could be found starting from the context that was passed to RepositoryProvider.of<$T>().
-
-        This can happen if the context you used comes from a widget above the RepositoryProvider.
-
-        The context used was: $context
-        ''');
-    }
-  }
+  static T of<T>(BuildContext context, {bool listen = false}) =>
+      lookupProvider<T>(
+        context,
+        listen: listen,
+        callerName: 'RepositoryProvider.of',
+        widgetName: 'RepositoryProvider',
+        typeDescription: 'repository of type',
+      );
 }

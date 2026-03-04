@@ -1,6 +1,9 @@
 import 'package:nocterm/nocterm.dart';
 import 'package:nocterm_bloc/nocterm_bloc.dart';
 
+import 'bloc_state_mixin.dart';
+import 'provider/src/provider.dart';
+
 /// Signature for the `selector` function which
 /// is responsible for returning a selected value, [T], based on [state].
 typedef BlocWidgetSelector<S, T> = T Function(S state);
@@ -56,49 +59,44 @@ class BlocSelector<B extends StateStreamable<S>, S, T>
 }
 
 class _BlocSelectorState<B extends StateStreamable<S>, S, T>
-    extends State<BlocSelector<B, S, T>> {
-  late B _bloc;
+    extends State<BlocSelector<B, S, T>>
+    with BlocStateMixin<B, S> {
   late T _state;
+
+  @override
+  B? get widgetBloc => component.bloc;
+
+  @override
+  void onBlocChanged(B newBloc) =>
+      _state = component.selector(newBloc.state);
 
   @override
   void initState() {
     super.initState();
-    _bloc = component.bloc ?? context.read<B>();
-    _state = component.selector(_bloc.state);
+    resolvedBloc = component.bloc ?? context.read<B>();
+    _state = component.selector(resolvedBloc.state);
   }
 
   @override
   void didUpdateComponent(BlocSelector<B, S, T> oldWidget) {
     super.didUpdateComponent(oldWidget);
-    final oldBloc = oldWidget.bloc ?? context.read<B>();
-    final currentBloc = component.bloc ?? oldBloc;
-    if (oldBloc != currentBloc) {
-      _bloc = currentBloc;
-      _state = component.selector(_bloc.state);
-    } else if (oldWidget.selector != component.selector) {
-      _state = component.selector(_bloc.state);
+    resolveBlocOnUpdate(oldWidget.bloc);
+    if (oldWidget.selector != component.selector) {
+      _state = component.selector(resolvedBloc.state);
     }
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final bloc = component.bloc ?? context.read<B>();
-    if (_bloc != bloc) {
-      _bloc = bloc;
-      _state = component.selector(_bloc.state);
-    }
+    resolveBlocOnDependencyChange();
   }
 
   @override
   Component build(BuildContext context) {
-    if (component.bloc == null) {
-      // Trigger a rebuild if the bloc reference has changed.
-      // See https://github.com/felangel/bloc/issues/2127.
-      context.select<B, bool>((bloc) => identical(_bloc, bloc));
-    }
+    applyBlocSelectGuard(context);
     return BlocListener<B, S>(
-      bloc: _bloc,
+      bloc: resolvedBloc,
       listener: (context, state) {
         final selectedState = component.selector(state);
         if (_state != selectedState) setState(() => _state = selectedState);
