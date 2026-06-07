@@ -1,3 +1,7 @@
+# 1.0.4
+
+- chore: pubspec fixes for support newest versions of dependencies
+
 # 1.0.3
 
 - chore: unit tests
