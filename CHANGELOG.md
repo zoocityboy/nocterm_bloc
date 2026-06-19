@@ -1,3 +1,7 @@
+# 1.0.5
+
+  - fix: provider issue 
+
 # 1.0.4
 
 - chore: pubspec fixes for support newest versions of dependencies
