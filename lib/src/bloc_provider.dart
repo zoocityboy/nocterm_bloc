@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:nocterm/nocterm.dart';
 import 'provider/src/provider.dart';
 import 'provider/single_child_widget.dart';
+import 'provider_lookup.dart';
 
 /// {@template bloc_provider}
 /// Takes a `create` function that is responsible for
@@ -88,21 +89,12 @@ class BlocProvider<T extends StateStreamableSource<Object?>>
   static T of<T extends StateStreamableSource<Object?>>(
     BuildContext context, {
     bool listen = false,
-  }) {
-    try {
-      return Provider.of<T>(context, listen: listen);
-    } on ProviderNotFoundException catch (e) {
-      if (e.valueType != T) rethrow;
-      throw FlutterError('''
-        BlocProvider.of() called with a context that does not contain a $T.
-        No ancestor could be found starting from the context that was passed to BlocProvider.of<$T>().
-
-        This can happen if the context you used comes from a widget above the BlocProvider.
-
-        The context used was: $context
-        ''');
-    }
-  }
+  }) => lookupProvider<T>(
+    context,
+    listen: listen,
+    callerName: 'BlocProvider.of',
+    widgetName: 'BlocProvider',
+  );
 
   @override
   Component buildWithChild(BuildContext context, Component? child) {
