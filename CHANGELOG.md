@@ -1,3 +1,6 @@
+# 1.1.0
+  - bump dependencies on nocterm `>=0.7.0`
+  
 # 1.0.5
 
   - fix: provider issue 
