@@ -449,7 +449,14 @@ class _InheritedProviderScopeElement<T> extends InheritedElement
   }
 
   @override
-  void update(_InheritedProviderScope<T> newComponent) {
+  void update(Component newComponent) {
+    if (newComponent is! _InheritedProviderScope<T>) {
+      throw StateError('''
+Tried to rebuild an InheritedProvider with a different type of InheritedComponent.;
+This is likely a mistake and is unsupported.
+If you're in this situation, consider passing a `key` unique to each individual constructor.
+''');
+    }
     assert(() {
       if (component.owner._delegate.runtimeType !=
           newComponent.owner._delegate.runtimeType) {
